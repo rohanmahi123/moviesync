@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MovieSync 3-Person</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/simple-peer@9.11.1/simplepeer.min.js"></script>
+</head>
+<body>
+  <h1>🎬 MovieSync</h1>
+
+  <input type="file" id="videoFile" accept="video/*" />
+  <button id="uploadBtn">Upload Movie</button>
+  <br><br>
+
+  <video id="videoPlayer" width="640" controls></video>
+
+  <h2>📷 Video Call</h2>
+  <div id="cams">
+    <video id="cam1" autoplay muted></video>
+    <video id="cam2" autoplay></video>
+    <video id="cam3" autoplay></video>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "moviesync-upload",
+  "version": "1.0.0",
+  "description": "MovieSync 3-person with upload and video call",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "multer": "^2.0.1",
+    "socket.io": "^4.7.2"
+  }
+}

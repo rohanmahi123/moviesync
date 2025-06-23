@@ -1,0 +1,20 @@
+/* public/style.css */
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 20px;
+  background: #111;
+  color: white;
+}
+
+video {
+  margin: 10px;
+  border: 3px solid #fff;
+  border-radius: 10px;
+  background: black;
+}
+
+#cams {
+  display: flex;
+  justify-content: center;
+}
