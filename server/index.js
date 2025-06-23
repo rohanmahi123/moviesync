@@ -1,64 +1,39 @@
 // server/index.js
 const express = require("express");
-const http = require("http");
-const multer = require("multer");
-const path = require("path");
-const { Server } = require("socket.io");
-
 const app = express();
-const server = http.createServer(app);
-const io = new Server(server);
+const http = require("http").createServer(app);
+const io = require("socket.io")(http);
+const path = require("path");
+const multer = require("multer");
 
-const MAX_USERS = 3;
-let userSockets = [];
+const PORT = process.env.PORT || 3000;
 
-app.use(express.static(path.join(__dirname, "../public")));
-app.use("/video", express.static(path.join(__dirname, "../uploads")));
-
-// File upload
+// Upload setup
 const storage = multer.diskStorage({
-  destination: "./uploads",
-  filename: (req, file, cb) => cb(null, "video.mp4"),
+  destination: path.join(__dirname, "../uploads"),
+  filename: (req, file, cb) => cb(null, "video.mp4")
 });
 const upload = multer({ storage });
 
+// Serve uploaded videos
+app.use("/video", express.static(path.join(__dirname, "../uploads")));
+
+// Serve static frontend
+app.use(express.static(path.join(__dirname, "../public")));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../public/index.html"));
+});
+
+// Upload endpoint
 app.post("/upload", upload.single("video"), (req, res) => {
-  res.status(200).send("Uploaded");
+  res.send("Uploaded");
 });
 
+// Socket.io setup (your peer + sync logic here)
 io.on("connection", (socket) => {
-  userSockets.push(socket);
-
-  // ✅ Assign host (first user)
-  if (userSockets.length === 1) {
-    socket.emit("assign-host");
-  }
-
-
-  userSockets.push(socket);
-
-  socket.on("join-room", () => {
-    const others = userSockets.filter((s) => s.id !== socket.id).map((s) => s.id);
-    socket.emit("all-users", others);
-    socket.broadcast.emit("user-joined", socket.id);
-  });
-
-  socket.on("signal", ({ to, data }) => {
-    const target = userSockets.find((s) => s.id === to);
-    if (target) target.emit("signal", { from: socket.id, data });
-  });
-
-  socket.on("sync", (data) => {
-    socket.broadcast.emit("sync", data);
-  });
-
-  socket.on("disconnect", () => {
-    userSockets = userSockets.filter((s) => s !== socket);
-    socket.broadcast.emit("user-left", socket.id);
-  });
+  // socket logic
 });
 
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, "0.0.0.0", () => {
-  console.log(`✅ Server running at http://localhost:${PORT}`);
+http.listen(PORT, () => {
+  console.log(`✅ Server running on port ${PORT}`);
 });
